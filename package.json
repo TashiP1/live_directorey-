@@ -1,0 +1,23 @@
+{
+  "name": "daily_diary_nodejs",
+  "version": "1.0.0",
+  "description": "Node Application with, Mongo DB",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TashiP1/Daily_Diary_NodeJS.git"
+  },
+  "author": "Tashi Phuntsho",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TashiP1/Daily_Diary_NodeJS/issues"
+  },
+  "homepage": "https://github.com/TashiP1/Daily_Diary_NodeJS#readme",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
