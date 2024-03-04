@@ -6,7 +6,9 @@ app.set("view engine", "ejs");
 
 app.listen(3000);
 
-app.get("/", (req, res) => {
+app.use(express.static('public'));
+
+app.get("/", (req, res) => {``
   const notes = [
     {
       title: "Yoshi finds eggs",
@@ -31,6 +33,8 @@ app.get("/about", (req, res) => {
 app.get("/note/create", (req, res) => {
   res.render("newNote", { title: "New Note" });
 });
+
+// This is an example of Middleware
 
 app.use((req, res) => {
   res.status(404).render("404", { title: "404" });
