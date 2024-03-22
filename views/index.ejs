@@ -5,13 +5,19 @@
     <%- include('./partials/nav.ejs') %>
 
     <div class="notes content">
-      <h1>All Note's Today</h1>
+      <h1>All Note's</h1>
 
-      <% if (notes.length > 0) { %> <% notes.forEach(note => { %>
-      <h3 class="title"><%= note.title %></h3>
-      <p class="snippet"><%= note.snippet %></p>
+      <% if (data.length > 0) { %> <% data.forEach(note => { %>
+      <div class="note">
+        <h3 class="title"><%= note.title %></h3>
+        <p class="snippet"><%= note.snippet %></p>
+      </div>
+      <a class="single" href="/<%= note._id %>">
+        <button class="btn">Details</button>
+      </a>
+
       <% }); %> <% } else { %>
-      <p>Nothing to display</p>
+      <p>Nothing to display.....</p>
       <% } %>
     </div>
 
