@@ -1,60 +1,87 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
-const homeRoute = require("./routes/homeRoute");
 const bcrypt = require("bcrypt");
 const csrf = require("csurf");
-const User = require("./models/dailyNote");
 const cookieParser = require("cookie-parser");
-const rateLimit = require("express-rate-limit"); 
+const rateLimit = require("express-rate-limit");
+const fs = require("fs");
+const path = require("path");
+
+const homeRoute = require("./routes/homeRoute");
+const User = require("./models/newUser");
+const Admin = require("./models/adminModel");
 
 const app = express();
+const PORT = 3000;
 const dbURI = "mongodb+srv://tashi:12345@cluster123.x9dv8.mongodb.net/";
 
 mongoose
   .connect(dbURI)
-  .then(() => {
-    app.listen(3000, () => console.log("Server running on port 3000"));
-  })
-  .catch((err) => console.log(err));
+  .then(() =>
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+  )
+  .catch((err) => console.error("Database connection error:", err));
 
 app.set("view engine", "ejs");
-
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
-
 app.use(cookieParser());
 
-// CSRF protection middleware
 const csrfProtection = csrf({ cookie: true });
+app.use(csrfProtection);
 
 const loginLimiter = rateLimit({
-  windowMs: 30 * 1000, // 30 seconds
-  max: 3, // Limit each IP to 5 requests per 30 seconds
+  windowMs: 30 * 1000,
+  max: 3,
   message: "Too many login attempts. Please try again later.",
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
-// Session setup
 app.use(
   session({
     secret: "your-secret-key",
     resave: false,
     saveUninitialized: true,
-    cookie: { httpOnly: true, secure: false }
+    cookie: { httpOnly: true, secure: false },
   })
 );
 
-// Dummy user credentials
-// const user = { username: "admin", password: "password" };
+app.use((req, res, next) => {
+  if (!req.session.actions) {
+    req.session.actions = [];
+  }
+  next();
+});
 
-const ADMIN_CREDENTIALS = {
-  username: "admin",
-  password: "admin123", // Hardcoded password for admin
+const logAction = (req, action) => {
+  const username = req.session.user || "Guest"; 
+  if (req.session.actions) {
+    req.session.actions.push({
+      action,
+      username,
+      timestamp: new Date().toISOString(),
+    });
+  }
 };
 
-// Middleware to check if user is logged in
+const saveLogFile = (req) => {
+  if (req.session.actions && req.session.actions.length > 0) {
+    const username = req.session.user || "guest"; 
+    const date = new Date().toISOString().split("T")[0]; 
+
+    const logFile = path.join(
+      __dirname,
+      "logs",
+      `${username}_${date}_${Date.now()}.log`
+    );
+
+    fs.mkdirSync(path.dirname(logFile), { recursive: true });
+    fs.writeFileSync(logFile, JSON.stringify(req.session.actions, null, 2));
+  }
+};
+
 const requireAuth = (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/login");
@@ -62,63 +89,53 @@ const requireAuth = (req, res, next) => {
   next();
 };
 
-app.use(csrfProtection);
-
-// Login Page
 app.get("/login", (req, res) => {
   res.render("login", { error: null, csrfToken: req.csrfToken() });
 });
 
-// Apply loginLimiter middleware here
-app.post("/login", loginLimiter, csrfProtection, async (req, res) => {
+app.post("/login", loginLimiter, async (req, res) => {
   const { username, password } = req.body;
-
-  // Check if the rate limit is exceeded
-  if (req.rateLimit && req.rateLimit.remaining === 0) {
-    return res.render("login", { 
-      error: "You have reached the maximum number of login attempts. Please try again later after 30 seconds.",
-      csrfToken: req.csrfToken() 
-    });
-  }
-
   try {
-    // Hardcoded admin check
-    if (username === "admin" && password === "admin123") {
+    const admin = await Admin.findOne({ username });
+    if (admin && await bcrypt.compare(password, admin.password)) {
       req.session.user = username;
-      return res.redirect("/"); // Redirect to the admin dashboard
+      logAction(req, "Admin logged in");
+      return res.redirect("/");
     }
 
-    // Check in the database
     const user = await User.findOne({ uname: username });
-
     if (user && await bcrypt.compare(password, user.pass)) {
       req.session.user = user.uname;
-      return res.redirect("/user"); // Redirect to the user dashboard
-    } else {
-      return res.render("login", { error: "Invalid username or password", csrfToken: req.csrfToken() });
+      logAction(req, "User logged in");
+      return res.redirect("/user");
     }
+
+    res.render("login", {
+      error: "Invalid username or password",
+      csrfToken: req.csrfToken(),
+    });
   } catch (err) {
-    console.log(err);
-    return res.render("login", { error: "An error occurred. Please try again.", csrfToken: req.csrfToken() });
+    console.error(err);
+    res.render("login", {
+      error: "An error occurred. Please try again.",
+      csrfToken: req.csrfToken(),
+    });
   }
 });
 
-
-// Logout
 app.get("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/login");
-  });
+  saveLogFile(req);
+  req.session.destroy(() => res.redirect("/login"));
 });
 
 app.get("/about", requireAuth, (req, res) => {
+  logAction(req, "Visited About Page");
   res.render("about", { title: "About" });
 });
 
-// Apply `requireAuth` middleware to protect routes
 app.use("/", requireAuth, homeRoute);
 
-// 404 Page
 app.use((req, res) => {
+  logAction(req, "Visited 404 Page");
   res.status(404).render("404", { title: "404" });
 });

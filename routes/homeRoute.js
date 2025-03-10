@@ -1,18 +1,18 @@
 const express = require("express");
-const noteController = require("../controllers/noteControllers");
+const detailsController = require("../controllers/detailsControllers");
 
 const router = express.Router();
 
-router.get("/", noteController.note_index);
+router.get("/", detailsController.note_index);
 
-router.get("/user", noteController.note_user);
+router.get("/user", detailsController.note_user);
 
-router.post("/", noteController.note_post);
+router.post("/", detailsController.note_post);
 
-router.get("/note/create", noteController.note_create);
+router.get("/note/create", detailsController.note_create);
 
-router.get("/:id", noteController.note_id);
+router.get("/:id", detailsController.note_id);
 
-router.delete("/:id", noteController.note_delete);
+router.delete("/:id", detailsController.note_delete);
 
 module.exports = router;
