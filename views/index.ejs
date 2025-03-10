@@ -5,22 +5,39 @@
     <%- include('./partials/nav.ejs') %>
 
     <div class="notes content">
-      <h1>All Note's</h1>
+      <h1>Employee Details</h1>
 
-      <% if (data.length > 0) { %> <% data.forEach(note => { %>
-      <div class="note">
-        <h3 class="title"><%= note.title %></h3>
-        <p class="snippet"><%= note.snippet %></p>
-      </div>
-      <a class="single" href="/<%= note._id %>">
-        <button class="btn">Details</button>
-      </a>
-
-      <% }); %> <% } else { %>
-      <p>Nothing to display.....</p>
+      <% if (data.length > 0) { %>
+        <% data.forEach(note => { %>
+          <div class="note">
+            <h3 class="title"><%= escape(note.title) %></h3>
+            <p class="snippet"><%= escape(note.snippet) %></p>
+          </div>
+          <!-- Use relative URL to avoid injecting malicious data -->
+          <a class="single" href="/<%= note._id %>">
+            <button class="btn">Details</button>
+          </a>
+        <% }); %>
+      <% } else { %>
+        <p>Nothing to display.....</p>
       <% } %>
     </div>
 
     <%- include('./partials/footer.ejs') %>
+
+    <script>
+      // Prevent XSS by escaping data
+      function escape(str) {
+        return (str || '').replace(/[&<>"']/g, function (char) {
+          return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+          }[char];
+        });
+      }
+    </script>
   </body>
 </html>

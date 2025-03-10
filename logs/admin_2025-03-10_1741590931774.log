@@ -1,0 +1,23 @@
+[
+  {
+    "action": "Admin logged in",
+    "username": "admin",
+    "timestamp": "2025-03-10T07:15:21.566Z"
+  },
+  {
+    "action": "Visited Home page",
+    "timestamp": "2025-03-10T07:15:22.574Z"
+  },
+  {
+    "action": "Viewed note with ID: 67ce90873ab1638d3eeeeabe",
+    "timestamp": "2025-03-10T07:15:26.586Z"
+  },
+  {
+    "action": "Deleted note with ID: 67ce90873ab1638d3eeeeabe",
+    "timestamp": "2025-03-10T07:15:29.980Z"
+  },
+  {
+    "action": "Visited Home page",
+    "timestamp": "2025-03-10T07:15:30.128Z"
+  }
+]

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <%- include('./partials/head.ejs') %>
+  </head>
+  <body>
+    <%- include('./partials/nav.ejs') %>
+
+    <div class="create content">
+      <form action="/" method="post" id="createForm">
+        <label for="title">Name:</label>
+        <input type="text" id="title" name="title" required />
+        
+        <label for="snippet">Email:</label>
+        <input type="email" id="snippet" name="snippet" required />
+        
+        <label for="uname">UserName:</label>
+        <input type="text" id="uname" name="uname" required />
+        
+        <label for="pass">Password:</label>
+        <input type="password" id="pass" name="pass" minlength="5" required />
+        
+        <label for="body">Additional Details:</label>
+        <textarea id="body" cols="30" rows="10" name="body" required></textarea>
+        
+        <!-- CSRF Token -->
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    
+    <%- include('./partials/footer.ejs') %>
+
+    <script>
+      // Add custom client-side validation for the password
+      document.getElementById('createForm').addEventListener('submit', function(event) {
+        const password = document.getElementById('pass').value;
+
+        // Regular expression to check for at least one number and at least one special character
+        const passwordRegex = /[0-9]/;  // Checks for at least one number
+        const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;  // Checks for at least one special character
+        
+        if (password.length < 5 || !passwordRegex.test(password) || !specialCharRegex.test(password)) {
+          event.preventDefault();  // Prevent form submission
+          alert('Password must be at least 5 characters long, contain at least one number, and one special character.');  // Show alert
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input {
+            width: 90%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <% if (error) { %>
+            <p class="error"><%= error %></p>
+        <% } %>
+        <form action="/login" method="POST" id="loginForm">
+            <label>Username:</label>
+            <input type="text" name="username" id="username" required><br>
+            <label>Password:</label>
+            <input type="password" name="password" id="password" required><br>
+
+            <!-- Include CSRF Token -->
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+      // Client-side validation before submitting the form
+      document.getElementById('loginForm').addEventListener('submit', function(event) {
+        // const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Basic client-side checks
+        // if (username.length < 4) {
+        //   event.preventDefault();
+        //   alert("Username must be at least 4 characters long.");
+        // }
+        if (password.length < 5) {
+          event.preventDefault();
+          alert("Password must be at least 6 characters long.");
+        }
+      });
+    </script>
+</body>
+</html>
