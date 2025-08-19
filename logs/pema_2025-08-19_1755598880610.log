@@ -1,0 +1,15 @@
+[
+  {
+    "action": "User logged in",
+    "username": "pema",
+    "timestamp": "2025-08-19T10:20:26.565Z"
+  },
+  {
+    "action": "Visited User Dashboard",
+    "timestamp": "2025-08-19T10:20:26.717Z"
+  },
+  {
+    "action": "Visited User Dashboard",
+    "timestamp": "2025-08-19T10:20:29.893Z"
+  }
+]

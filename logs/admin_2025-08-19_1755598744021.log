@@ -1,0 +1,24 @@
+[
+  {
+    "action": "Admin logged in",
+    "username": "admin",
+    "timestamp": "2025-08-19T10:18:57.492Z"
+  },
+  {
+    "action": "Visited Home page",
+    "timestamp": "2025-08-19T10:18:57.786Z"
+  },
+  {
+    "action": "Visited Home page",
+    "timestamp": "2025-08-19T10:19:00.794Z"
+  },
+  {
+    "action": "Visited About Page",
+    "username": "admin",
+    "timestamp": "2025-08-19T10:19:01.760Z"
+  },
+  {
+    "action": "Accessed new note creation page",
+    "timestamp": "2025-08-19T10:19:02.658Z"
+  }
+]
