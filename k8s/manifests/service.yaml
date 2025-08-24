@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: live-dir
+  labels:
+    app: live-dir
+spec:
+  selector:
+    app: live-dir
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
