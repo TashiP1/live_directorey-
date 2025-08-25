@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: live-dir
+  labels:
+    app: live-dir
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: live-dir
+  template:
+    metadata:
+      labels:
+        app: live-dir
+    spec:
+      containers:
+      - name: live-dir
+        image: tashi555/live_dir:{{ .Values.image.tag }}
+        ports:
+        - containerPort: 3000

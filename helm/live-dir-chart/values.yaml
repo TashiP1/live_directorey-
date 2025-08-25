@@ -1,0 +1,22 @@
+# Default values for my-nginx chart
+replicaCount: 1
+
+image:
+  repository: tashi555/live_dir
+  tag: "v1"
+  pullPolicy: IfNotPresent    
+
+ingress:
+  enabled: true
+  annotations:
+    # kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []  
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
