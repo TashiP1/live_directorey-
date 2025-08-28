@@ -1,0 +1,21 @@
+name: "cach dependencies"
+description: "Cache dependencies using the cache action"
+inputs:
+  caching:
+    description: "Whether to cach or not"
+    required: false
+    default: 'true'
+runs:
+  using: "composite"
+  steps:
+    - name: Cache dependencies
+      id: cache
+      if: inputs.caching == 'true'
+      uses: actions/cache@v3
+      with:
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
+      run: npm ci
+      shell: bash
