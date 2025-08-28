@@ -56,6 +56,7 @@ jobs:
 
   update-helm-chart:
     runs-on: ubuntu-latest
+    environment: staging
     needs: push
     steps:
       - name: Chekout source
