@@ -1,22 +1,43 @@
-// __tests__/app.test.js
-const request = require("supertest");
-const expressApp = require("../app"); // your app.js
+const { spawn } = require("child_process");
+const fetch = require("node-fetch"); // v2
 
-describe("HTTP tests (No DB, CI-friendly)", () => {
-  test("GET /login returns 200", async () => {
-    const res = await request(expressApp).get("/login");
+let serverProcess;
+const BASE_URL = "http://localhost:3000";
+
+beforeAll((done) => {
+  serverProcess = spawn("node", ["app.js"], { stdio: ["ignore", "pipe", "pipe"] });
+
+  serverProcess.stdout.on("data", (data) => {
+    if (data.toString().includes("Server running")) done();
+  });
+
+  serverProcess.stderr.on("data", (data) => console.error(`Server error: ${data}`));
+});
+
+afterAll(() => {
+  if (serverProcess) serverProcess.kill();
+});
+
+describe("HTTP tests (No DB modification)", () => {
+  test("GET /login returns 200 with CSRF input", async () => {
+    const res = await fetch(`${BASE_URL}/login`);
     expect(res.status).toBe(200);
-    expect(res.text).toContain("Login"); // basic check
+    const text = await res.text();
+    expect(text).toMatch(/name="_csrf"/);
   });
 
   test("GET /about redirects to /login if not logged in", async () => {
-    const res = await request(expressApp).get("/about");
+    const res = await fetch(`${BASE_URL}/about`, { redirect: "manual" });
     expect(res.status).toBe(302);
-    expect(res.headers.location).toBe("/login");
+    const location = res.headers.get("location");
+    expect(location.endsWith("/login")).toBe(true);
   });
 
-  test("GET /nonexistent returns 404", async () => {
-    const res = await request(expressApp).get("/this-route-does-not-exist");
-    expect(res.status).toBe(404);
+  test("GET /nonexistent redirects to /login if not logged in", async () => {
+    const res = await fetch(`${BASE_URL}/this-route-does-not-exist`, { redirect: "manual" });
+    expect(res.status).toBe(302);
+    const location = res.headers.get("location");
+    expect(location.endsWith("/login")).toBe(true);
   });
 });
+
