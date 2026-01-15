@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const fs = require("fs");
 const path = require("path");
+require('dotenv').config();
 
 const homeRoute = require("./routes/homeRoute");
 const User = require("./models/newUser");
@@ -14,7 +15,7 @@ const Admin = require("./models/adminModel");
 
 const app = express();
 const PORT = 3000;
-const dbURI = "mongodb+srv://tashi:12345@cluster123.x9dv8.mongodb.net/";
+const dbURI = process.env.MONGODB_URI;
 
 mongoose
   .connect(dbURI)
