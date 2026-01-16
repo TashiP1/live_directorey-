@@ -19,3 +19,9 @@ spec:
         image: tashi555/live_dir:{{ .Values.image.tag }}
         ports:
         - containerPort: 3000
+        env:
+          - name: MONGODB_URI
+            valueFrom:
+              secretKeyRef:
+                name: mongo-secret   # replace with your secret name
+                key: MONGODB_URI
