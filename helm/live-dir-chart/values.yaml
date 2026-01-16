@@ -3,7 +3,7 @@ replicaCount: 1
 
 image:
   repository: tashi555/live_dir
-  tag: "21057279030"
+  tag: "21057788093"
   pullPolicy: IfNotPresent    
 
 ingress:
