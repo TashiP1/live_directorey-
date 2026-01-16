@@ -16,5 +16,5 @@ COPY --from=builder /app /app
 
 EXPOSE 3000
 
-CMD ["node", "app.js"]
+CMD ["app.js"]
 
